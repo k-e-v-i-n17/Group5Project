@@ -70,3 +70,7 @@ div.footer{
     border-width: 1px;
     border-color: #000022;
 }
+
+.errorText{
+    margin: 10px;
+}

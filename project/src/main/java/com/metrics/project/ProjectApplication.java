@@ -69,11 +69,6 @@ class DataController {
 		return "index";
 	}
 
-	@RequestMapping("/error")
-	public String error(Model model) {
-		return "error";
-	}
-
 	@PostMapping("/home")
 	public String home(Model model) {
 		return "redirect:/";
