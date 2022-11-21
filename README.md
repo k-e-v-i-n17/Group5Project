@@ -1,3 +1,17 @@
 # Group5Project
-"Thanks for reading me, appreciate it xoxo" 
-  - Kevin
+"Development of a dashboard presenting metrics and visualisations that are useful for software engineers to unserstand their performance, both individually and in a team setting"
+
+## Contributors:
+Backend-
+Annelee O Mahony 
+Paddi Hua
+Yvah Huseva
+
+Frontend-
+Laura Golec
+Ruairi Donaghey
+Shane Gilligan
+Sai Pranay Gamini
+
+Team lead-
+Kevin Morley
