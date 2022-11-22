@@ -20,7 +20,7 @@
 <div class="main">
     <p>General body of text explaining project???</p>
 </div>
-<div class="footer"><p> RUAIRI DONAGHEY SHANE GILLIGAN LAURA GOLEC PADDI HUA
-    YEVA HUSEVA KEVIN MORLEY ODHRAN MULVIHILL ANNELEE O MAHONY</p></div>
+<div class="footer"><p> RUAIRI DONAGHEY, SHANE GILLIGAN, LAURA GOLEC, PADDI HUA,
+    YEVA HUSEVA, KEVIN MORLEY, ODHRAN MULVIHILL, ANNELEE O MAHONY</p></div>
 </body>
 </html>
