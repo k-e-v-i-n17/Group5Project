@@ -9,6 +9,7 @@ import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 
 import org.icepear.echarts.Line;
+import org.icepear.echarts.Bar;
 import org.icepear.echarts.charts.line.LineAreaStyle;
 import org.icepear.echarts.charts.line.LineSeries;
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis;
@@ -94,17 +95,6 @@ class DataController {
 	@PostMapping("/")
 	public String indexPost() {
 		return handlebarRetrieve("index",null);
-		
-	@PostMapping("/linesAdded")
-	@GetMapping("/linesAdded")
-	public String linesAdded(Model model){
-		Map<String, Integer> graphData = new TreeMap<>();
-		graphData.put("2016", -147);
-		graphData.put("2017", 1256);
-		graphData.put("2018", -3856);
-		graphData.put("2019", 19807);
-		model.addAttribute("chartData", graphData);
-		return "linesAdded";
 	}
 
 	@GetMapping("/graph")
@@ -115,6 +105,16 @@ class DataController {
 	@PostMapping("/graph")
 	public String graphPost() {
 		return handlebarRetrieve("graph","ECharts Java");
+	}
+
+	@GetMapping("/lines")
+	public String linesGet() {
+		return handlebarRetrieve("lines","ECharts Java");
+	}
+
+	@PostMapping("/lines")
+	public String linesPost() {
+		return handlebarRetrieve("lines","ECharts Java");
 	}
 
 	@GetMapping("/linechart")
@@ -130,6 +130,21 @@ class DataController {
 		Engine engine = new Engine();
 		// return the full html of the echarts, used in iframes in your own template
 		String json = engine.renderHtml(line);
+		return ResponseEntity.ok(json);
+	}
+
+	@GetMapping("/linesChanged")
+	public ResponseEntity<String> linesChanged() {
+		Bar bar = new Bar()
+				.setLegend()
+				.setTooltip("item")
+				.addXAxis(new String[] { "2016", "2017", "2018", "2019"})
+				.addYAxis()
+				.addSeries("Additions", new Number[] { 147, 1256, 3856, 19807 })
+				.addSeries("Deletions", new Number[] { 19807, 3856, 1256, 147 });
+		Engine engine = new Engine();
+		// return the full html of the echarts, used in iframes in your own template
+		String json = engine.renderHtml(bar);
 		return ResponseEntity.ok(json);
 	}
 
