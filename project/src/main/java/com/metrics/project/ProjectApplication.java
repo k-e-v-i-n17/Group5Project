@@ -1,9 +1,7 @@
 package com.metrics.project;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -67,6 +66,18 @@ class DataController {
 	public String index(Model model) {
 		getAllData(model);
 		return "index";
+	}
+
+	@PostMapping("/linesAdded")
+	@GetMapping("/linesAdded")
+	public String linesAdded(Model model){
+		Map<String, Integer> graphData = new TreeMap<>();
+		graphData.put("2016", -147);
+		graphData.put("2017", 1256);
+		graphData.put("2018", -3856);
+		graphData.put("2019", 19807);
+		model.addAttribute("chartData", graphData);
+		return "linesAdded";
 	}
 
 	@PostMapping("/home")

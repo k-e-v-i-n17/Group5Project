@@ -13,8 +13,8 @@
     <form action="/rawdata" method="POST">
         <input class="li button" type="submit" value="Raw Data" name="add">
     </form>
-    <form action="/button3" method="POST">
-        <input class="li button" type="submit" value="Button 3" name="add">
+    <form action="/linesAdded" method="POST">
+        <input class="li button" type="submit" value="Lines Added By User" name="add">
     </form>
 </ul>
 <div class="main">

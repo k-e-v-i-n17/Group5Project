@@ -1,0 +1,63 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Group5</title>
+    <link rel="stylesheet" href="initialStyle.css">
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/32927890?v=4">
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script type="text/javascript"
+            src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+<ul class="headerBar">
+    <li class="li">Welcome to the Group 5</li>
+    <form action="/home" method="POST">
+        <input class="li active button" type="submit" value="Home" name="add">
+    </form>
+    <form action="/rawdata" method="POST">
+        <input class="li button" type="submit" value="Raw Data" name="add">
+    </form>
+    <form action="/linesAdded" method="POST">
+        <input class="li button" type="submit" value="Lines Added By User" name="add">
+    </form>
+</ul>
+<div class="main">
+    <div align="center" style="width: 1000px;">
+        <h2>Total lines Added/Deleted by all Users</h2>
+        <div id="chart_div"></div>
+    </div>
+    <script th:inline="javascript">
+        let real_data = /*[[${chartData}]]*/'noValue';
+        $(document).ready(function() {
+            google.charts.load('current', {
+                packages : [ 'corechart', 'bar' ]
+            });
+            google.charts.setOnLoadCallback(drawColumnChart);
+        });
+        function drawColumnChart() {
+            let data = new google.visualization.DataTable();
+            data.addColumn('string', 'User');
+            data.addColumn('number', 'Lines Added');
+            Object.keys(real_data).forEach(function(key) {
+                data.addRow([ key, real_data[key] ]);
+            });
+            let options = {
+                title: 'Lines Added by User',
+                hAxis: {
+                    title: 'User',
+                },
+                vAxis: {
+                    title: 'Lines Added'
+                }
+            };
+            let chart = new google.visualization.ColumnChart(document
+                .getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+</div>
+<div class="footer"><p>Laura Golec</p></div>
+</body>
+</html>
