@@ -18,7 +18,8 @@
     </form>
 </ul>
 <div class="main">
-    <p>General body of text explaining project???</p>
+    <h3>Welcome to Group 5's SWENG Assignment 3</h3>
+    <p>Our project visualises data from the Linux Repo to provide data on developer effectiveness</p>
 </div>
 <div class="footer"><p>Ruairí Donaghey</p></div>
 </body>

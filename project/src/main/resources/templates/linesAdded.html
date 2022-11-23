@@ -5,8 +5,8 @@
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/32927890?v=4">
     <script
             src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<!--    <link rel="stylesheet"-->
+<!--      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">-->
     <script type="text/javascript"
             src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
@@ -24,7 +24,7 @@
     </form>
 </ul>
 <div class="main">
-    <div align="center" style="width: 1000px;">
+    <div align="center" style="width: 1000px; height: 1000px">
         <h2>Total lines Added/Deleted by all Users</h2>
         <div id="chart_div"></div>
     </div>
@@ -50,7 +50,9 @@
                 },
                 vAxis: {
                     title: 'Lines Added'
-                }
+                },
+                width:1500,
+                height:800
             };
             let chart = new google.visualization.ColumnChart(document
                 .getElementById('chart_div'));
