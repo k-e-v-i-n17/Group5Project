@@ -5,6 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import java.io.IOException;
+
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Template;
+
+import org.icepear.echarts.Line;
+import org.icepear.echarts.charts.line.LineAreaStyle;
+import org.icepear.echarts.charts.line.LineSeries;
+import org.icepear.echarts.components.coord.cartesian.CategoryAxis;
+import org.icepear.echarts.render.Engine;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +28,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,7 +67,7 @@ class DataPoint {
 	}
 }
 
-@Controller
+@RestController
 class DataController {
 
 	@Autowired
@@ -63,21 +75,53 @@ class DataController {
 
 	static int newID=0;
 
+	private String handlebarRetrieve(String fileName, String insertData)
+	{
+		Handlebars handlebars = new Handlebars();
+		String html = "";
+		try {
+			Template template = handlebars.compile("templates/"+fileName);
+			html = template.apply(""+insertData);
+		} catch (IOException e) {
+			System.out.println("template file not found");
+		}
+		return html;
+	}
+
 	@GetMapping("/")
-	public String index(Model model) {
-		getAllData(model);
-		return "index";
+	public String indexGet() {
+		return handlebarRetrieve("index",null);
 	}
 
 	@PostMapping("/")
-	public String indexPost(Model model) {
-		return "redirect:/";
+	public String indexPost() {
+		return handlebarRetrieve("index",null);
 	}
 
-	@PostMapping("/rawdata")
-	public String rawdata(Model model) {
-		getAllData(model);
-		return "rawdata";
+	@GetMapping("/graph")
+	public String graphGet() {
+		return handlebarRetrieve("graph","ECharts Java");
+	}
+
+	@PostMapping("/graph")
+	public String graphPost() {
+		return handlebarRetrieve("graph","ECharts Java");
+	}
+
+	@GetMapping("/linechart")
+	public ResponseEntity<String> getChart() {
+		Line line = new Line()
+				.addXAxis(new CategoryAxis()
+						.setData(new String[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" })
+						.setBoundaryGap(false))
+				.addYAxis()
+				.addSeries(new LineSeries()
+						.setData(new Number[] { 820, 932, 901, 934, 1290, 1330, 1320 })
+						.setAreaStyle(new LineAreaStyle()));
+		Engine engine = new Engine();
+		// return the full html of the echarts, used in iframes in your own template
+		String json = engine.renderHtml(line);
+		return ResponseEntity.ok(json);
 	}
 
 	@GetMapping("/testdata")
