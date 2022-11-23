@@ -1,9 +1,7 @@
 package com.metrics.project;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import java.io.IOException;
 
@@ -96,6 +94,17 @@ class DataController {
 	@PostMapping("/")
 	public String indexPost() {
 		return handlebarRetrieve("index",null);
+		
+	@PostMapping("/linesAdded")
+	@GetMapping("/linesAdded")
+	public String linesAdded(Model model){
+		Map<String, Integer> graphData = new TreeMap<>();
+		graphData.put("2016", -147);
+		graphData.put("2017", 1256);
+		graphData.put("2018", -3856);
+		graphData.put("2019", 19807);
+		model.addAttribute("chartData", graphData);
+		return "linesAdded";
 	}
 
 	@GetMapping("/graph")

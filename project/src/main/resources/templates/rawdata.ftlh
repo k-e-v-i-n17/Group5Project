@@ -7,17 +7,29 @@
 <body>
 <ul class="headerBar">
     <li class="li">Welcome to the Group 5</li>
-    <form action="/" method="POST">
+    <form action="/home" method="POST">
         <input class="li button" type="submit" value="Home" name="add">
     </form>
-    <form action="/graph" method="POST">
-        <input class="li button" type="submit" value="Button 3" name="add">
+    <form action="/rawdata" method="POST">
+        <input class="li active button" type="submit" value="Raw Data" name="add">
+    </form>
     <form action="/linesAdded" method="POST">
         <input class="li button" type="submit" value="Lines Added By User" name="add">
     </form>
 </ul>
-<p class="errorText">An error has occurred and the requested page could not be found. Apologies for the inconvenience.</p>
-<div class="footer"><p> RUAIRI DONAGHEY SHANE GILLIGAN LAURA GOLEC PADDI HUA
-    YEVA HUSEVA KEVIN MORLEY ODHRAN MULVIHILL ANNELEE O MAHONY</p></div>
+<div class="main">
+    <ul><p>Data:</p>
+        <#if data??>
+            <#list data as point>
+                <li>
+                    <p>${point}</p>
+                </li>
+            <#else>
+                <p>You don't have any data.</p>
+            </#list>
+        </#if>
+    </ul>
+</div>
+<div class="footer"><p>Ruairí Donaghey</p></div>
 </body>
 </html>
