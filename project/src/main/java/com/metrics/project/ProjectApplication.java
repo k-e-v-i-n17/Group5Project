@@ -1,13 +1,18 @@
 package com.metrics.project;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 
+import lombok.*;
 import org.icepear.echarts.Line;
 import org.icepear.echarts.Bar;
 import org.icepear.echarts.charts.line.LineAreaStyle;
@@ -30,10 +35,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @SpringBootApplication
 public class ProjectApplication {
@@ -46,6 +56,25 @@ public class ProjectApplication {
 
 interface DataRepository extends MongoRepository<DataPoint, String> {
 
+}
+
+class linesData{
+	public List<String> names = new ArrayList<>();
+	public List<Number> additions = new ArrayList<>();
+	public List<Number> deletions = new ArrayList<>();
+	public List<Number> total = new ArrayList<>();
+	public String[] getNamesArray(){
+		return names.toArray(new String[0]);
+	}
+	public Number[] getAdditionsArray(){
+		return additions.toArray(new Number[0]);
+	}
+	public Number[] getDeletionsArray(){
+		return deletions.toArray(new Number[0]);
+	}
+	public Number[] getTotalArray(){
+		return total.toArray(new Number[0]);
+	}
 }
 
 @Document(collection = "data")
@@ -117,6 +146,68 @@ class DataController {
 		return handlebarRetrieve("lines","ECharts Java");
 	}
 
+	public static linesData getTopTen(linesData raw){
+		linesData top = new linesData();
+		Number[] rawTotal = raw.getTotalArray();
+		List<Integer> ignore = new ArrayList<>();
+		Number max = rawTotal[0];
+		int maxIndex = 0;
+		while(ignore.size() < 10) {
+			for(int i = 1; i < rawTotal.length; i++) {
+				if (rawTotal[i].intValue() > max.intValue() && !ignore.contains(i)) {
+					max = rawTotal[i];
+					maxIndex = i;
+				}
+			}
+			max = 0;
+			ignore.add(maxIndex);
+		}
+		for(int j = 0; j < ignore.size(); j++){
+			top.names.add(raw.names.get(ignore.get(j)));
+			top.additions.add(raw.additions.get(ignore.get(j)));
+			top.deletions.add(raw.deletions.get(ignore.get(j)));
+		}
+		return top;
+	}
+
+	public static linesData readJSONData(ClassPathResource resource){
+		linesData data = new linesData();
+		try {
+			String fullJSONFile = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+			Scanner scanner = new Scanner(fullJSONFile);
+			while (scanner.hasNextLine()) {
+				String useless = scanner.nextLine();
+				String name = scanner.nextLine();
+				String addedLines = scanner.nextLine();
+				String deletedLines = scanner.nextLine();
+				name = name.substring(name.indexOf("\"") + 1);
+				name = name.substring(0, name.indexOf("\""));
+				addedLines = addedLines.substring(addedLines.indexOf("\"") + 1);
+				addedLines = addedLines.substring(0, addedLines.indexOf("\""));
+				deletedLines = deletedLines.substring(deletedLines.indexOf("\"") + 1);
+				deletedLines = deletedLines.substring(0, deletedLines.indexOf("\""));
+				int added = Integer.parseInt(addedLines);
+				int deleted = Integer.parseInt(deletedLines);
+				int total = added + deleted;
+				System.out.println(name);
+				System.out.println(addedLines);
+				System.out.println(deletedLines);
+				data.names.add(name);
+				data.additions.add(added);
+				data.deletions.add(deleted);
+				data.total.add(total);
+				if(name.equals("yuuri")){
+					break;
+				}
+			}
+			scanner.close();
+
+		} catch (IOException e) {
+			return data;
+		}
+		return data;
+	}
+
 	@GetMapping("/linechart")
 	public ResponseEntity<String> getChart() {
 		Line line = new Line()
@@ -133,15 +224,23 @@ class DataController {
 		return ResponseEntity.ok(json);
 	}
 
+
+
 	@GetMapping("/linesChanged")
 	public ResponseEntity<String> linesChanged() {
+		ClassPathResource staticDataResource = new ClassPathResource("AddDelData.json");
+		linesData data = readJSONData(staticDataResource);
+		linesData topTenData = getTopTen(data);
+		String[] namesArray = topTenData.getNamesArray();
+		Number[] additionsArray = topTenData.getAdditionsArray();
+		Number[] deletionsArray = topTenData.getDeletionsArray();
 		Bar bar = new Bar()
 				.setLegend()
 				.setTooltip("item")
-				.addXAxis(new String[] { "2016", "2017", "2018", "2019"})
+				.addXAxis(namesArray)
 				.addYAxis()
-				.addSeries("Additions", new Number[] { 147, 1256, 3856, 19807 })
-				.addSeries("Deletions", new Number[] { 19807, 3856, 1256, 147 });
+				.addSeries("Additions", additionsArray)
+				.addSeries("Deletions", deletionsArray);
 		Engine engine = new Engine();
 		// return the full html of the echarts, used in iframes in your own template
 		String json = engine.renderHtml(bar);
