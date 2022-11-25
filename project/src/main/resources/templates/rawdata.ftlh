@@ -6,15 +6,15 @@
 </head>
 <body>
 <ul class="headerBar">
-    <li class="li">Welcome to the Group 5 </li>
-    <form action="/" method="POST">
+    <li class="li">Welcome to the Group 5</li>
+    <form action="/home" method="POST">
         <input class="li button" type="submit" value="Home" name="add">
     </form>
     <form action="/rawdata" method="POST">
         <input class="li active button" type="submit" value="Raw Data" name="add">
     </form>
-    <form action="/button3" method="POST">
-        <input class="li button" type="submit" value="Button 3" name="add">
+    <form action="/linesAdded" method="POST">
+        <input class="li button" type="submit" value="Lines Added By User" name="add">
     </form>
 </ul>
 <div class="main">
@@ -30,7 +30,6 @@
         </#if>
     </ul>
 </div>
-<div class="footer"><p> RUAIRI DONAGHEY SHANE GILLIGAN LAURA GOLEC PADDI HUA
-    YEVA HUSEVA KEVIN MORLEY ODHRAN MULVIHILL ANNELEE O MAHONY</p></div>
+<div class="footer"><p>Ruairí Donaghey</p></div>
 </body>
 </html>
