@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group5</title>
+    <link rel="stylesheet" href="initialStyle.css">
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/32927890?v=4">
+</head>
+
+<body>
+<ul class="headerBar">
+    <li class="li">Welcome to the Group 5</li>
+    <form action="/" method="POST">
+        <input class="li button" type="submit" value="Home" name="add">
+    </form>
+    <form action="/graph" method="POST">
+        <input class="li button" type="submit" value="Line Graph" name="add">
+    </form>
+    <form action="/lines" method="POST">
+        <input class="li active button" type="submit" value="Lines Added By User" name="add">
+    </form>
+</ul>
+<h3 align="center">Top Ten Contributors to the Repo</h3>
+{{!-- creates graph firame --}}
+<iframe id="c_iframe" height="800px" width="95%" frameborder="no" scrolling="no" src="linesChanged" labelDisplay="rotate"></iframe>
+
+<div class="footer"><p> RUAIRI DONAGHEY, SHANE GILLIGAN, LAURA GOLEC, PADDI HUA,
+    YEVA HUSEVA, KEVIN MORLEY, ANNELEE O MAHONY</p></div>
+</body>
+
+</html>
