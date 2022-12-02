@@ -1,3 +1,5 @@
-# Group5Project
-"Thanks for reading me, appreciate it xoxo" 
-  - Kevin
+Commands, used to extract the database, are described in "CLI_commands.txt".
+The database merging query is in "SQLite_query.txt".
+
+Thanks for your attention!
+Yeva
