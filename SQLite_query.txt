@@ -1,0 +1,15 @@
+SELECT commits.author_name,
+           commits.author_email,
+           date(commits.author_when) AS commit_date,
+           count(DISTINCT commits.hash) AS commit_count,
+           count(DISTINCT stats.file_path) AS files_changed,
+           SUM(stats.additions) AS additions,
+           SUM(stats.deletions) AS deletions,
+           SUM(stats.additions - stats.deletions) AS delta,
+           CASE WHEN stats.additions = 0 THEN 1 ELSE round(AVG(stats.deletions / stats.additions), 2) END AS avg_ratio
+      FROM commits
+           INNER JOIN
+           stats ON commits.hash = stats.hash
+     GROUP BY commits.author_name,
+              commits.author_email,
+              date(commits.author_when)
