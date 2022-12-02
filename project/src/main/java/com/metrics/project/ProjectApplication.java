@@ -114,6 +114,8 @@ class DataController {
 	ArrayList<String[]> commits = new ArrayList<>();
 	String[] months;
 	Number[] monthsCount;
+	Number[] monthsAdd;
+	Number[] monthsDel;
 
 	private String handlebarRetrieve(String fileName, String insertData)
 	{
@@ -146,6 +148,16 @@ class DataController {
 	@PostMapping("/graph")
 	public String graphPost() {
 		return handlebarRetrieve("graph","ECharts Java");
+	}
+
+	@GetMapping("/graphAD")
+	public String graphGetAD() {
+		return handlebarRetrieve("graphAD","ECharts Java");
+	}
+
+	@PostMapping("/graphAD")
+	public String graphPostAD() {
+		return handlebarRetrieve("graphAD","ECharts Java");
 	}
 
 	@GetMapping("/lines")
@@ -230,6 +242,26 @@ class DataController {
 				.addYAxis()
 				.addSeries(new LineSeries()
 						.setData(monthsCount)
+						.setAreaStyle(new LineAreaStyle()));
+		Engine engine = new Engine();
+		// return the full html of the echarts, used in iframes in your own template
+		String json = engine.renderHtml(line);
+		return ResponseEntity.ok(json);
+	}
+
+	@GetMapping("/linechartAD")
+	public ResponseEntity<String> getChartAD() {
+		if(!textDataRead) readTextDataAD();
+		Line line = new Line()
+				.addXAxis(new CategoryAxis()
+						.setData(months)
+						.setBoundaryGap(false))
+				.addYAxis()
+				.addSeries(new LineSeries()
+						.setData(monthsAdd)
+						.setAreaStyle(new LineAreaStyle()))
+				.addSeries(new LineSeries()
+						.setData(monthsDel)
 						.setAreaStyle(new LineAreaStyle()));
 		Engine engine = new Engine();
 		// return the full html of the echarts, used in iframes in your own template
@@ -383,6 +415,144 @@ class DataController {
 		public YMNode(int YM, int count) {
 			this.YM=YM;
 			this.count=count;
+		}
+	}
+
+	public void readTextDataAD()
+	{
+		try
+		{
+			FileReader fileReader = new FileReader("src/main/resources/TextData.txt");// Enter the entire path of the file if needed
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			boolean endOfFile = false;
+			while(!endOfFile)
+			{
+				String commit = bufferedReader.readLine();
+				if (commit != null)
+				{
+					String[] commitSplit = commit.split(",");
+					String[] commitData = new String[7];
+					commitData[commitDataName] = commitSplit[commitSplitDataName];
+					commitData[commitDataCommitCount] = commitSplit[commitSplitDataCommitCount];
+					commitData[commitDataAdd] = commitSplit[commitSplitDataAdd];
+					commitData[commitDataDel] =commitSplit[commitSplitDataDel];
+					String[] splitDate = commitSplit[commitSplitDataDate].split("-");
+					commitData[commitDataYear] = splitDate[splitDateYear];
+					commitData[commitDataMonth] = splitDate[splitDateMonth];
+					commitData[commitDataDay] = splitDate[splitDateDay];
+					commits.add(commitData);
+					textDataRead=true;
+				}
+				else
+				{
+					endOfFile = true;
+				}
+			}
+			bufferedReader.close();
+			fileReader.close();
+			yearMonthAD();
+		} // End try
+
+		catch (FileNotFoundException e)
+		{
+			months = new String[]{"e"};
+			monthsCount = new Number[]{0};
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	void yearMonthAD()
+	{
+		ArrayList<YMADNode> yearMonthAD= new ArrayList<>();
+		for(int i=0;i<commits.size();i++)
+		{
+			String[] line = commits.get(i);
+			YMADNode currentDate=
+					new YMADNode(line[commitDataYear],line[commitDataMonth],line[commitDataAdd],line[commitDataDel]);
+			if(yearMonthAD.isEmpty()) yearMonthAD.add(currentDate);
+			else
+			{
+				boolean added=false;
+				for(int j=0;(j<yearMonthAD.size())&&!added;j++)
+				{
+					YMADNode compareNode=yearMonthAD.get(j);
+					if(currentDate.YM==compareNode.YM)
+					{
+						yearMonthAD.set(j, new YMADNode(currentDate.YM,currentDate.add+compareNode.add,
+								currentDate.del+compareNode.del));
+						added=true;
+					}
+					else if(currentDate.YM<compareNode.YM)
+					{
+						yearMonthAD.add(j,currentDate);
+						added=true;
+					}
+				}
+				if(!added) yearMonthAD.add(currentDate);
+			}
+			if(i==39)
+			{
+				System.out.print("d");}
+		}
+		formatsAD(yearMonthAD);
+	}
+
+	void formatsAD(ArrayList<YMADNode> yearMonthAD)
+	{
+		YMADNode first=yearMonthAD.get(0);
+		YMADNode last= yearMonthAD.get(yearMonthAD.size()-1);
+		//int size= (((last.YM/100-first.YM/100)-1)*12)+(11-first.YM%100)+(last.YM%100);
+		int fullYears= (((last.YM/100-first.YM/100)-1)*12);
+		int monFirst=13-(first.YM%100);
+		int monLast=(last.YM%100);
+		int size=fullYears+monFirst+monLast;
+		months = new String[size];
+		monthsAdd = new Number[size];
+		monthsDel = new Number[size];
+		int monthFormat=first.YM;
+		int j=0;
+		for(int i=0;i<size;i++)
+		{
+			if(yearMonthAD.get(j).YM==monthFormat)
+			{
+				monthsAdd[i]=yearMonthAD.get(j).add;
+				monthsDel[i]=-yearMonthAD.get(j).del;
+				if(j<yearMonthAD.size()-1)j++;
+			}
+			else
+			{
+				monthsAdd[i]=0;
+				monthsDel[i]=0;
+			}
+			String monthFormatted=""+monthFormat++;
+			if(monthFormat%100==13)monthFormat+=88;
+			monthFormatted=monthFormatted.substring(0,4)+"-"+monthFormatted.substring(4,6);
+			months[i]=monthFormatted;
+		}
+		System.out.print("d");
+	}
+
+	class YMADNode
+	{
+		int YM;
+		int add;
+		int del;
+
+		public YMADNode(String year, String month, String add, String del)
+		{
+			this.YM =(Integer.parseInt(year)*100)+Integer.parseInt(month);
+			this.add=Integer.parseInt(add);
+			this.del=Integer.parseInt(del);
+		}
+
+		public YMADNode(int YM, int add, int del) {
+			this.YM=YM;
+			this.add=add;
+			this.del=del;
 		}
 	}
 }
